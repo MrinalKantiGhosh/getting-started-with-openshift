@@ -1,0 +1,26 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: "${SERVICE_NAME}"
+  creationTimestamp:
+  annotations:
+    description: "Application template for ${SERVICE_NAME}"
+    tags: "${SERVICE_NAME},microservice"
+    version: 1.0.0
+objects:
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: "${SERVICE_NAME}"
+      namespace: getting-started-with-openshift
+    spec:
+      clusterIP: None
+      ports:
+        - nodePort: 0
+          port: 80
+          protocol: TCP
+          targetPort: 80
+parameters:
+  - name: "SERVICE_NAME"
+    value: "hello-world-service"

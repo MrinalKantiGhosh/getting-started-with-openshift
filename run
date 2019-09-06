@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+oc project getting-started-with-openshift
+oc process -f openshift/service.yml | oc apply -f -
