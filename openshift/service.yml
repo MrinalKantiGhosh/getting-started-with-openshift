@@ -13,14 +13,37 @@ objects:
     apiVersion: v1
     metadata:
       name: "${SERVICE_NAME}"
-      namespace: getting-started-with-openshift
+      labels:
+        app: "${SERVICE_NAME}"
     spec:
       clusterIP: None
+      selector:
+        deploymentconfig: "${SERVICE_NAME}"
       ports:
-        - nodePort: 0
-          port: 80
-          protocol: TCP
-          targetPort: 80
+        - port: 8080
+          targetPort: 8080
+  - kind: DeploymentConfig
+    apiVersion: apps.openshift.io/v1
+    metadata:
+      name: "${SERVICE_NAME}"
+      app: "${SERVICE_NAME}"
+    spec:
+      selector:
+        app: "${SERVICE_NAME}"
+        deploymentconfig: "${SERVICE_NAME}"
+      replicas: 1
+      triggers: []
+      template:
+        metadata:
+          labels:
+            app: "${SERVICE_NAME}"
+            deploymentconfig: "${SERVICE_NAME}"
+        spec:
+          containers:
+            - name: hello-world
+              image: springio/gs-spring-boot-docker
+              ports:
+                  - containerPort: 8080
 parameters:
   - name: "SERVICE_NAME"
-    value: "hello-world-service"
+    value: "hello-world"
