@@ -41,7 +41,7 @@ objects:
         spec:
           containers:
             - name: hello-world
-              image: springio/gs-spring-boot-docker
+              image: image-registry.openshift-image-registry.svc:5000/getting-started-with-openshift/hello-world:latest
               ports:
                   - containerPort: 8080
 parameters:

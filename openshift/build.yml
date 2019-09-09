@@ -1,0 +1,40 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: "${SERVICE_NAME}"
+  creationTimestamp:
+  annotations:
+    description: "Application template for ${SERVICE_NAME}"
+    tags: "${SERVICE_NAME},microservice"
+    version: 1.0.0
+objects:
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: "${SERVICE_NAME}"
+      labels:
+        app: "${SERVICE_NAME}"
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: "${SERVICE_NAME}"
+    spec:
+      runPolicy: "Serial"
+      triggers: []
+      source:
+        type: "Git"
+        git:
+          ref: master
+          uri: "https://github.com/MrinalKantiGhosh/getting-started-with-openshift.git"
+        contextDir: ''
+      strategy:
+        dockerStrategy:
+          dockerfilePath: "Dockerfile"
+      output:
+        to:
+          kind: "ImageStreamTag"
+          name: "${SERVICE_NAME}:latest"
+parameters:
+  - name: "SERVICE_NAME"
+    value: "hello-world"
