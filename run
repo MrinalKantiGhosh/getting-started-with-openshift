@@ -3,9 +3,9 @@
 oc project getting-started-with-openshift
 
 oc process -f openshift/build.yml | oc apply -f -
-oc start-build hello-world --follow -w --from-dir=.
+oc start-build hello-world-build-config --follow -w --from-dir=.
 
 oc process -f openshift/service.yml | oc apply -f -
-oc rollout cancel dc/hello-world
-oc rollout latest dc/hello-world
-oc rollout status dc/hello-world
+oc rollout cancel dc/hello-world-deployment-config
+oc rollout latest dc/hello-world-deployment-config
+oc rollout status dc/hello-world-deployment-config

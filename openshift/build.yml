@@ -2,23 +2,23 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: "${SERVICE_NAME}"
+  name: "${APP_NAME}"
   creationTimestamp:
   annotations:
-    description: "Application template for ${SERVICE_NAME}"
-    tags: "${SERVICE_NAME},microservice"
+    description: "Application template for ${APP_NAME}"
+    tags: "${APP_NAME},microservice"
     version: 1.0.0
 objects:
   - kind: ImageStream
     apiVersion: v1
     metadata:
-      name: "${SERVICE_NAME}"
+      name: "${IMAGE_NAME}"
       labels:
-        app: "${SERVICE_NAME}"
+        app: "${APP_NAME}"
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: "${SERVICE_NAME}"
+      name: "${BUILD_CONFIG_NAME}"
     spec:
       runPolicy: "Serial"
       triggers: []
@@ -34,7 +34,13 @@ objects:
       output:
         to:
           kind: "ImageStreamTag"
-          name: "${SERVICE_NAME}:latest"
+          name: "${IMAGE_NAME}:latest"
 parameters:
   - name: "SERVICE_NAME"
-    value: "hello-world"
+    value: "hello-world-service"
+  - name: "APP_NAME"
+    value: "hello-world-app"
+  - name: "IMAGE_NAME"
+    value: "hello-world-image"
+  - name: "BUILD_CONFIG_NAME"
+    value: "hello-world-build-config"

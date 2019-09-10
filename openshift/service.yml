@@ -2,11 +2,11 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: "${SERVICE_NAME}"
+  name: "${APP_NAME}"
   creationTimestamp:
   annotations:
-    description: "Application template for ${SERVICE_NAME}"
-    tags: "${SERVICE_NAME},microservice"
+    description: "Application template for ${APP_NAME}"
+    tags: "${APP_NAME},microservice"
     version: 1.0.0
 objects:
   - kind: Service
@@ -14,36 +14,54 @@ objects:
     metadata:
       name: "${SERVICE_NAME}"
       labels:
-        app: "${SERVICE_NAME}"
+        app: "${APP_NAME}"
     spec:
       clusterIP: None
       selector:
-        deploymentconfig: "${SERVICE_NAME}"
+        deploymentconfig: "${DEPLOYMENT_CONFIG_NAME}"
       ports:
         - port: 8080
           targetPort: 8080
   - kind: DeploymentConfig
     apiVersion: apps.openshift.io/v1
     metadata:
-      name: "${SERVICE_NAME}"
-      app: "${SERVICE_NAME}"
+      name: "${DEPLOYMENT_CONFIG_NAME}"
+      app: "${APP_NAME}"
     spec:
       selector:
-        app: "${SERVICE_NAME}"
-        deploymentconfig: "${SERVICE_NAME}"
+        app: "${APP_NAME}"
+        deploymentconfig: "${DEPLOYMENT_CONFIG_NAME}"
       replicas: 1
       triggers: []
       template:
         metadata:
           labels:
-            app: "${SERVICE_NAME}"
-            deploymentconfig: "${SERVICE_NAME}"
+            app: "${APP_NAME}"
+            deploymentconfig: "${DEPLOYMENT_CONFIG_NAME}"
         spec:
           containers:
             - name: hello-world
-              image: image-registry.openshift-image-registry.svc:5000/getting-started-with-openshift/hello-world:latest
+              image: 172.30.1.1:5000/getting-started-with-openshift/hello-world-image
               ports:
                   - containerPort: 8080
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: "${ROUTE_NAME}"
+    spec:
+      to:
+        kind: Service
+        name: "${SERVICE_NAME}"
+        weight: 100
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Allow
 parameters:
+  - name: "APP_NAME"
+    value: "hello-world-app"
   - name: "SERVICE_NAME"
-    value: "hello-world"
+    value: "hello-world-service"
+  - name: "DEPLOYMENT_CONFIG_NAME"
+    value: "hello-world-deployment-config"
+  - name: "ROUTE_NAME"
+    value: "hello-world-route"
