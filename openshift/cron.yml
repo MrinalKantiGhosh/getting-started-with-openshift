@@ -1,0 +1,41 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: "${APP_NAME}"
+  creationTimestamp:
+  annotations:
+    description: "Application template for ${APP_NAME}"
+    tags: "${APP_NAME},microservice"
+    version: 1.0.0
+objects:
+  - kind: CronJob
+    apiVersion: batch/v1beta1
+    metadata:
+      name: "${CRON_JOB_NAME}"
+    spec:
+      schedule: "*/1 * * * *"
+      successfulJobsHistoryLimit: 3
+      failedJobsHistoryLimit: 1
+      jobTemplate:
+        spec:
+          template:
+            metadata:
+              labels:
+                parent: "${CRON_JOB_NAME}"
+            spec:
+              containers:
+                - name: hello-world
+                  image: 172.30.1.1:5000/getting-started-with-openshift/hello-world-image
+                  ports:
+                    - containerPort: 8080
+              restartPolicy: OnFailure
+parameters:
+  - name: APP_NAME
+    value: "hello-world-app"
+  - name: JOB_NAME
+    value: "hello-world-job"
+  - name: CRON_JOB_NAME
+    value: "hello-world-cron-job"
+  - name: DEPLOYMENT_CONFIG_NAME
+    value: "hello-world-deployment-config"
